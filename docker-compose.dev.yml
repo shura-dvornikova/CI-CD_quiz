@@ -1,0 +1,13 @@
+services:
+  bot:
+    image: docker.io/${DOCKERHUB_USERNAME}/linux-quiz-bot:${IMAGE_TAG}
+    container_name: linux-quiz-bot-dev
+    restart: unless-stopped
+    env_file: .env.dev
+    environment:
+      DB_PATH: /data/quiz_bot.db
+    volumes:
+      - linux-quiz-bot-dev-data:/data
+
+volumes:
+  linux-quiz-bot-dev-data:
