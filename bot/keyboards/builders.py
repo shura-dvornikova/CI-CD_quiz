@@ -10,14 +10,7 @@ LEVELS = {
 
 # Topic display names (Russian)
 TOPICS = {
-    "file_systems": "Файловые системы",
-    "permissions": "Права и пользователи",
-    "processes": "Процессы",
-    "resources": "Системные ресурсы",
-    "systemd": "Сервисы (systemd)",
-    "networking": "Сети",
-    "boot": "Загрузка ОС",
-    "bash": "Bash и автоматизация",
+    "ci_cd_basics": "Основы CI/CD",
 }
 
 

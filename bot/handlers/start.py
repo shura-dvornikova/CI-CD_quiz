@@ -33,10 +33,10 @@ async def cmd_start(msg: Message, state: FSMContext) -> None:
         # New user - ask for name
         await msg.answer(
             "🤓 *Что умеет этот бот?*\n\n"
-            "Привет\\! Я бот для тестирования знаний Linux\\.\n"
-            "Помогу тебе подготовиться к собеседованию на DevOps\\!\n\n"
+            "Привет\\! Я бот для тестирования знаний CI/CD.\n"
+            "Помогу тебе изучить CI/CD и подготовиться к техническим собеседованиям!!\n\n"
             "Введи своё имя:",
-            parse_mode="MarkdownV2",
+            parse_mode="None",
         )
         await state.set_state(QuizState.entering_name)
 
@@ -50,7 +50,11 @@ async def cmd_level(msg: Message, state: FSMContext) -> None:
         return
 
     await state.clear()
-    await msg.answer("Выбери уровень сложности:", reply_markup=build_level_keyboard())
+    await msg.answer(
+        "Выбери уровень сложности:",
+        reply_markup=build_level_keyboard(),
+        parse_mode=None,
+        )
     await state.set_state(QuizState.selecting_level)
 
 
@@ -73,7 +77,7 @@ async def cmd_theme(msg: Message, state: FSMContext) -> None:
     await msg.answer(
         f"Уровень: *{get_level_name(level)}*\n\nВыбери тему:",
         reply_markup=build_topics_keyboard(),
-        parse_mode="MarkdownV2",
+        parse_mode="None",
     )
     await state.set_state(QuizState.selecting_topic)
 
@@ -93,7 +97,7 @@ async def process_name(msg: Message, state: FSMContext) -> None:
     await msg.answer(
         f"Приятно познакомиться, *{escape_md(name)}*\\! 👋\n\n" "Выбери свой уровень:",
         reply_markup=build_level_keyboard(),
-        parse_mode="MarkdownV2",
+        parse_mode="None",
     )
     await state.set_state(QuizState.selecting_level)
 
@@ -115,7 +119,7 @@ async def process_level(cb: CallbackQuery, state: FSMContext, bot: Bot) -> None:
     await cb.message.edit_text(
         f"Уровень: *{get_level_name(level)}* ✅\n\n" "Теперь выбери тему:",
         reply_markup=build_topics_keyboard(),
-        parse_mode="MarkdownV2",
+        parse_mode="None",
     )
     await state.update_data(level=level)
     await state.set_state(QuizState.selecting_topic)
@@ -148,7 +152,7 @@ async def select_topic_again(cb: CallbackQuery, state: FSMContext) -> None:
         await cb.message.edit_text(
             f"Уровень: *{get_level_name(level)}*\n\n" "Выбери тему:",
             reply_markup=build_topics_keyboard(),
-            parse_mode="MarkdownV2",
+            parse_mode="None",
         )
         await state.set_state(QuizState.selecting_topic)
     await cb.answer()
