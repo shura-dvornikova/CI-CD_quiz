@@ -1,18 +1,13 @@
 services:
   bot:
     image: docker.io/${DOCKERHUB_USERNAME}/ci-cd-quiz:${IMAGE_TAG}
-
     container_name: ci-cd-quiz-dev
-
     restart: unless-stopped
-
     env_file: .env.dev
-
     environment:
       DB_PATH: /data/quiz_bot.db
-
     volumes:
       - ci-cd-quiz-dev-data:/data
-
+      
 volumes:
   ci-cd-quiz-dev-data:
