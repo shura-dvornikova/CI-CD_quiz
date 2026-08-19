@@ -11,6 +11,15 @@ LEVELS = {
 # Topic display names (Russian)
 TOPICS = {
     "ci_cd_basics": "Основы CI/CD",
+    "github_actions": "GitHub Actions",
+    "gitlab_ci": "GitLab CI/CD",
+    "jenkins": "Jenkins",
+    "docker_ci_cd": "Docker в CI/CD",
+    "testing": "Тестирование в CI/CD",
+    "artifacts": "Artifacts и Registry",
+    "deployment": "Стратегии deployment",
+    "security": "Безопасность CI/CD",
+    "monitoring": "Мониторинг и откат",
 }
 
 

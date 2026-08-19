@@ -54,7 +54,7 @@ async def cmd_level(msg: Message, state: FSMContext) -> None:
         "Выбери уровень сложности:",
         reply_markup=build_level_keyboard(),
         parse_mode=None,
-        )
+    )
     await state.set_state(QuizState.selecting_level)
 
 
