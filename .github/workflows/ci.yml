@@ -64,3 +64,55 @@ jobs:
           tags: |
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-quiz:latest
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-quiz:${{ github.sha }}   
+
+  deploy-dev:
+    needs: docker-build
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+
+    runs-on: [self-hosted, ci-cd-quiz]
+
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      IMAGE_TAG: ${{ github.sha }}
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Pull Docker image
+        run: |
+          docker pull docker.io/${DOCKERHUB_USERNAME}/ci-cd-quiz:${IMAGE_TAG}
+
+      - name: Create .env.dev
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN_DEV }}
+          FEEDBACK_CHANNEL_ID: ${{ secrets.FEEDBACK_CHANNEL_ID }}
+        run: |
+          test -n "$BOT_TOKEN"
+          test -n "$FEEDBACK_CHANNEL_ID"
+
+          cat > /srv/projects/ci_cd_quiz_bot/.env.dev <<EOF
+          ENV=dev
+          BOT_TOKEN=$BOT_TOKEN
+          FEEDBACK_CHANNEL_ID=$FEEDBACK_CHANNEL_ID
+          LOG_LEVEL=INFO
+          EOF
+
+      - name: Deploy dev
+        working-directory: /srv/projects/ci_cd_quiz_bot
+        run: |
+          docker compose \
+            -f docker-compose.dev.yml \
+            --env-file .env.dev \
+            -p ci-cd-quiz-dev \
+            up -d --force-recreate
+
+      - name: Show running container
+        run: |
+          docker ps \
+            --filter "name=ci-cd-quiz-dev" \
+            --format "{{.Names}} {{.Image}} {{.Status}}"
