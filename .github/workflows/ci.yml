@@ -103,7 +103,7 @@ jobs:
           EOF
 
       - name: Deploy dev
-        working-directory: /srv/projects/ci_cd_quiz_bot
+        working-directory: /srv/projects/ci_cd_quiz_bot/app
         run: |
           docker compose \
             -f docker-compose.dev.yml \
