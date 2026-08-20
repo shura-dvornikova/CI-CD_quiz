@@ -116,3 +116,12 @@ jobs:
           docker ps \
             --filter "name=ci-cd-quiz-dev" \
             --format "{{.Names}} {{.Image}} {{.Status}}"
+
+      - name: Smoke test
+        run: |
+          sleep 5
+          docker inspect -f '{{.State.Running}}' ci-cd-quiz-dev | grep -qx true
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs --tail 100 ci-cd-quiz-dev || true
