@@ -92,19 +92,51 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN_DEV }}
           FEEDBACK_CHANNEL_ID: ${{ secrets.FEEDBACK_CHANNEL_ID }}
         run: |
+          set -e
+
           test -n "$BOT_TOKEN"
           test -n "$FEEDBACK_CHANNEL_ID"
 
-          cat > /srv/projects/ci_cd_quiz_bot/.env.dev <<EOF
-          ENV=dev
-          BOT_TOKEN=$BOT_TOKEN
-          FEEDBACK_CHANNEL_ID=$FEEDBACK_CHANNEL_ID
-          LOG_LEVEL=INFO
-          EOF
+          ENV_FILE="/srv/projects/ci_cd_quiz_bot/app/.env.dev"
+
+          printf '%s\n' \
+            "ENV=dev" \
+            "BOT_TOKEN=$BOT_TOKEN" \
+            "FEEDBACK_CHANNEL_ID=$FEEDBACK_CHANNEL_ID" \
+            "LOG_LEVEL=INFO" \
+            > "$ENV_FILE"
+
+           chmod 600 "$ENV_FILE"
+
+           echo "Created $ENV_FILE"
+           ls -l "$ENV_FILE"
+
+      - name: Verify deployment files
+        working-directory: /srv/projects/ci_cd_quiz_bot/app
+        run: |
+          echo "Current directory:"
+          pwd
+
+          echo "Files:"
+          ls -la
+
+          echo "Checking .env.dev:"
+          test -f /srv/projects/ci_cd_quiz_bot/app/.env.dev
+
+          echo "Checking compose:"
+          test -f /srv/projects/ci_cd_quiz_bot/app/docker-compose.dev.yml
+
+          echo "Checking compose configuration:"
+          docker compose \
+            --env-file /srv/projects/ci_cd_quiz_bot/app/.env.dev \
+            -f docker-compose.dev.yml \
+            config     
 
       - name: Deploy dev
         working-directory: /srv/projects/ci_cd_quiz_bot/app
         run: |
+          test -f /srv/projects/ci_cd_quiz_bot/app/.env.dev
+
           docker compose \
             -f docker-compose.dev.yml \
             --env-file .env.dev \
